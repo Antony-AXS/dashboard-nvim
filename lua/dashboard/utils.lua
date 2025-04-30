@@ -126,19 +126,20 @@ function utils.get_package_manager_stats()
     package_manager_stats.count = #vim.tbl_keys(packer_plugins)
   end
   local status, lazy = pcall(require, 'lazy')
-  if status then
+  if status and type(lazy) == 'table' then
     package_manager_stats.name = 'lazy'
     local stats = lazy.stats()
     package_manager_stats.loaded = stats.loaded
     package_manager_stats.count = stats.count
     package_manager_stats.time = stats.startuptime
-  end
-  local ok = pcall(require, 'strive')
-  if ok then
-    package_manager_stats.name = 'strive'
-    package_manager_stats.loaded = vim.g.strive_loaded
-    package_manager_stats.time = vim.g.strive_startup_time
-    package_manager_stats.count = vim.g.strive_count
+  else
+    local ok, pkg = pcall(require, 'strive')
+    if ok and type(pkg) == 'table' then
+      package_manager_stats.name = 'strive'
+      package_manager_stats.loaded = vim.g.strive_loaded
+      package_manager_stats.time = vim.g.strive_startup_time
+      package_manager_stats.count = vim.g.strive_count
+    end
   end
   return package_manager_stats
 end
